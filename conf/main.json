@@ -1,0 +1,21 @@
+{
+  // Not sure if needed.
+  "user": "www-data",
+
+  // Access log file. Contains log of all requests to servers (if it does not
+  // explicitly specified for server).
+  "access_log": "../logs/access.log",
+
+  // Error log file. Contains all errors thrown by server (e.g. "file not
+  // found" (for "static" servers) or "bad gateway" (for "proxy" servers)
+  // errors.
+  "error_log": "../logs/error.log",
+
+  // Path to default HTML templates (error page or list index template).
+  "path_to_tpl": "../tpl/",
+
+  // Contains all virtual servers.
+  "servers": %%include "servers.json"%%
+  // You can also include all *.json files from specified directory:
+  // "servers": %%include-dir "/etc/panda/sites-enabled/"%%
+}

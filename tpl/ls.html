@@ -1,0 +1,13 @@
+<html>
+<head>
+    <title></title>
+</head>
+<body>
+    <h1>Index of {{ url }}:</h1>
+    <ul>
+        {{range $index, $element := files}}
+            <li><a href="{{$index.url}}">{{$index.filename}}</a></li>
+        {{end}}
+    </ul>
+</body>
+</html>

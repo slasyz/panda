@@ -1,0 +1,29 @@
+[
+  {
+    "listen": 8090,          // server port
+    "hostname": "localhost", // server hostname
+    "type": "static",        // server type (can be "static" or "proxy")
+    "handler_parameters": {
+      "root": "../html/",   // path to root directory
+      "indexes": true      // if true then server will generate directory 
+                           // listings if no "index.html" or so found, 
+                           // otherwise return HTTP 403.
+    }
+  },
+  {
+    "listen": 8091,
+    "hostname": "localhost",
+    "type": "proxy",
+    "proxy_parameters": {
+      "url": "http://127.0.0.1:12355/", // url of primary server
+      "redirect": false,
+      "headers": {
+        "Host": "host",
+        "X-Real-IP": "remote-addr",
+        "X-Forwarded-For": "forwarded-for"
+      },
+      "connect_timeout": 90
+    },
+    "client_max_body_size": "10MB"
+  }
+]
