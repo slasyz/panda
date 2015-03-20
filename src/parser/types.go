@@ -146,7 +146,7 @@ func appendPathValue(name, sign, value, currentFile string, array []string) (res
 
 func parsePathValue(name, sign, value, currentFile string) (result string, err error) {
     if value[0] == '"' && value[len(value)-1] == '"' {
-        result := value[1 : len(value)-1] // remove the quotes
+        result = value[1 : len(value)-1] // remove the quotes
         result, _ = filepath.Abs(filepath.Join(filepath.Dir(currentFile), result))
     } else {
         err = mustBe(name, "a string")
