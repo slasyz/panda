@@ -33,10 +33,12 @@ func parseConfigFile(file io.Reader, currentFileName string, currentServer *int)
             ip := submatches[0]
             port, _ := strconv.Atoi(submatches[1])
 
-            server := handle.ServerFields{IP: ip, Port: port}
-            handle.GlobalParameters.Servers = append(handle.GlobalParameters.Servers, server)
+            server := handle.NewServer(ip, port)
+            handle.GlobalParameters.Servers = append(handle.GlobalParameters.Servers, *server)
             *currentServer++
-            core.Debug("%s:%d: found new virtualhost with IP %s and port %s", currentFileName, currentLineNumber, ip, port)
+            server.AccessLogger = handle.GlobalParameters.AccessLogger
+            server.ErrorLogger = handle.GlobalParameters.ErrorLogger
+            core.Debug("%s:%d: found new virtualhost with IP %s and port %d", currentFileName, currentLineNumber, ip, port)
         case fieldRegexp.MatchString(currentLine):
             submatches := getRegexpSubmatches(fieldRegexp, []string{"name", "sign", "value"}, currentLine)
             name := submatches[0]
@@ -92,7 +94,7 @@ func ParseConfig(fileName string) (errs []error) {
         `\s*(\/\/.*)?\s*$`)
     virtualHostRegexp = regexp.MustCompile(`^` +
         `\[VirtualHost\s*\"` +
-        `(?P<ip>[^"]+)` +
+        `(?P<ip>[^"]*)` +
         `:` +
         `(?P<port>[^":]+)` +
         `\"\]` +
@@ -102,7 +104,7 @@ func ParseConfig(fileName string) (errs []error) {
         `\s*` +
         `(?P<sign>\+?=)` +
         `\s*` +
-        `(?P<value>\"[^"]*\"|\d+(B|KB|MB|GB)?|true|false)` + // string, integer or bool fields
+        `(?P<value>\"[^"]*\"|\d+(B|KB|MB|GB|ns|us|µs|ms|s|m|h)?|true|false)` + // string, integer or bool fields
         `$`)
     commandRegexp = regexp.MustCompile(`^` +
         `(?P<command>\w+)` +
