@@ -2,7 +2,7 @@ package config
 
 import (
     "errors"
-    "github.com/slasyz/panda/core"
+    "github.com/slasyz/panda/src/core"
     "log"
     "path/filepath"
     "regexp"

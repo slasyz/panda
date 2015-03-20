@@ -3,9 +3,9 @@ package main
 import (
     "flag"
     "fmt"
-    "github.com/slasyz/panda/config"
-    "github.com/slasyz/panda/core"
-    //"github.com/slasyz/panda/handle"
+    "github.com/slasyz/panda/src/config"
+    "github.com/slasyz/panda/src/core"
+    //"github.com/slasyz/panda/src/handle"
 )
 
 func main() {

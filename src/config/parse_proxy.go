@@ -2,7 +2,7 @@ package config
 
 import (
     "errors"
-    "github.com/slasyz/panda/handle"
+    "github.com/slasyz/panda/src/handle"
 )
 
 // parseServerParameterProxy sets value of "proxy" server
