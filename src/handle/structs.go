@@ -7,7 +7,7 @@ import (
 )
 
 // HandleFunc is handler function for HTTP request type
-type HandleFunc func(request http.Request, server ServerFields) (response http.Response)
+type HandleFunc func(w http.ResponseWriter, r *http.Request)
 
 // GlobalParameters is variable containing all panda parameters
 var GlobalParameters struct {

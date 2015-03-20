@@ -9,8 +9,8 @@ type ServerFieldsStatic struct {
     Indexes bool
 }
 
-func HandleStatic(request http.Request, server ServerFields) (response http.Response) {
-    serverSettings := server.Custom.(ServerFieldsStatic)
-    _ = serverSettings
+func (server *ServerFields) HandleStatic(w http.ResponseWriter, r *http.Request) {
+    custom := server.Custom.(ServerFieldsStatic)
+    _ = custom
     return
 }

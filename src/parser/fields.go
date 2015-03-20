@@ -38,10 +38,10 @@ func parseServerParameter(name, sign, value string, server *handle.ServerFields,
         switch server.Type {
         case "static":
             server.Custom = handle.ServerFieldsStatic{}
-            server.Handler = handle.HandleStatic
+            server.Handler = server.HandleStatic
         case "proxy":
             server.Custom = handle.ServerFieldsProxy{}
-            server.Handler = handle.HandleProxy
+            server.Handler = server.HandleProxy
         }
     default:
         switch server.Type {
