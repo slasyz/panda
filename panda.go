@@ -4,8 +4,10 @@ import (
     "flag"
     "fmt"
     "github.com/slasyz/panda/src/core"
+    "github.com/slasyz/panda/src/handle"
     "github.com/slasyz/panda/src/parser"
     "log"
+    "net/http"
 )
 
 func main() {
@@ -34,6 +36,23 @@ func main() {
         core.Log("Config test successful!")
         return
     }
+
+    // Begin to listen
+    for i, srv := range handle.GlobalParameters.Servers {
+        // create new http.Server
+        s := &http.Server{
+            Addr:         srv.GetAddr(),
+            Handler:      srv,
+            ReadTimeout:  srv.DefaultParameters.ReadTimeout,
+            WriteTimeout: srv.DefaultParameters.WriteTimeout,
+        }
+        core.Log("Starting listening to %s (server #%d)", srv.GetAddr(), i+1)
+        go s.ListenAndServe()
+    }
+
+    var input string
+    fmt.Scanln(&input)
+    fmt.Println("done")
 
     // TODO
 }

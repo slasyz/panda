@@ -42,7 +42,6 @@ func (server ServerFields) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 func (server ServerFields) GetAddr() string {
     portString := fmt.Sprintf("%d", server.Port)
-    fmt.Println(">>>>>> ", net.JoinHostPort(server.IP, portString))
     return net.JoinHostPort(server.IP, portString)
 }
 
