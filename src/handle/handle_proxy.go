@@ -12,7 +12,7 @@ type ServerFieldsProxy struct {
     ClientMaxBodySize int
 }
 
-func (server *ServerFields) HandleProxy(w http.ResponseWriter, r *http.Request) {
+func HandleProxy(w http.ResponseWriter, r *http.Request, server *ServerFields) {
     custom := server.Custom.(ServerFieldsProxy)
     _ = custom
     return

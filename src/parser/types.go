@@ -7,6 +7,7 @@ import (
     "path/filepath"
     "regexp"
     "strconv"
+    "time"
 )
 
 // Line regexps
@@ -97,6 +98,23 @@ func parseSizeValue(name, sign, value string) (result int, err error) {
         result = factor * result
     } else {
         err = mustBe(name, "data size, e.g. 1000B, 100KB, 10MB, 1GB")
+    }
+    return
+}
+
+// Size fields
+
+func assignDurationValue(name, sign, value string) (result time.Duration, err error) {
+    err = checkAssignSign(name, sign)
+
+    result, err = parseDurationValue(name, sign, value)
+    return
+}
+
+func parseDurationValue(name, sign, value string) (result time.Duration, err error) {
+    result, err = time.ParseDuration(value)
+    if err != nil {
+        err = mustBe(name, "time duration, such as \"300ms\", \"-1.5h\" or \"2h45m\"")
     }
     return
 }

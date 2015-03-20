@@ -36,8 +36,6 @@ func parseConfigFile(file io.Reader, currentFileName string, currentServer *int)
             server := handle.NewServer(ip, port)
             handle.GlobalParameters.Servers = append(handle.GlobalParameters.Servers, *server)
             *currentServer++
-            server.AccessLogger = handle.GlobalParameters.AccessLogger
-            server.ErrorLogger = handle.GlobalParameters.ErrorLogger
             core.Debug("%s:%d: found new virtualhost with IP %s and port %d", currentFileName, currentLineNumber, ip, port)
         case fieldRegexp.MatchString(currentLine):
             submatches := getRegexpSubmatches(fieldRegexp, []string{"name", "sign", "value"}, currentLine)
