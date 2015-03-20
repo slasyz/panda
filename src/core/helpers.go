@@ -9,7 +9,8 @@ import (
 )
 
 var DebugFlag *bool
-var OpenedFiles map[string]*log.Logger
+var OpenedLoggers map[string]*log.Logger
+var OpenedFiles []*os.File
 
 func Debug(str string, a ...interface{}) {
     if *DebugFlag {
@@ -23,7 +24,7 @@ func Log(str string, a ...interface{}) {
 }
 
 func OpenLogFile(fileName string) (logger *log.Logger, err error) {
-    logger, ok := OpenedFiles[fileName]
+    logger, ok := OpenedLoggers[fileName]
     if ok {
         return
     } else {
@@ -32,6 +33,15 @@ func OpenLogFile(fileName string) (logger *log.Logger, err error) {
             err = errors.New("cannot open file " + fileName)
         }
         logger = log.New(file, "", log.LstdFlags)
+
+        OpenedLoggers[fileName] = logger
+        OpenedFiles = append(OpenedFiles, file)
     }
     return
+}
+
+func CloseLogFiles() {
+    for _, file := range OpenedFiles {
+        file.Close()
+    }
 }

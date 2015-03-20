@@ -5,7 +5,7 @@ import (
     "fmt"
     "github.com/slasyz/panda/src/core"
     "github.com/slasyz/panda/src/parser"
-    //"github.com/slasyz/panda/src/handle"
+    "log"
 )
 
 func main() {
@@ -22,6 +22,8 @@ func main() {
     }
 
     // config parsing
+    core.OpenedLoggers = make(map[string]*log.Logger)
+    defer core.CloseLogFiles()
     errs := parser.ParseConfig(*configFile)
     if errs != nil {
         for _, err := range errs {
