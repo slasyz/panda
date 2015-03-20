@@ -3,8 +3,8 @@ package main
 import (
     "flag"
     "fmt"
-    "github.com/slasyz/panda/src/config"
     "github.com/slasyz/panda/src/core"
+    "github.com/slasyz/panda/src/parser"
     //"github.com/slasyz/panda/src/handle"
 )
 
@@ -22,7 +22,7 @@ func main() {
     }
 
     // config parsing
-    errs := config.ParseConfig(*configFile)
+    errs := parser.ParseConfig(*configFile)
     if errs != nil {
         for _, err := range errs {
             core.Log("%s", err)
