@@ -2,9 +2,7 @@ package handle
 
 import (
     //"github.com/slasyz/panda/core"
-    "fmt"
     "log"
-    "net"
     "net/http"
     "time"
 )
@@ -28,27 +26,14 @@ var GlobalParameters struct {
 // Server is type containing each server parameters
 type ServerFields struct {
     DefaultParameters
-    IP         string
-    Port       int
-    Hostname   string
+    Hostnames  []string
+    Ports      []int
     Type       string
     Custom     interface{}
     HandleFunc func(http.ResponseWriter, *http.Request, *ServerFields)
 }
 
-func (server ServerFields) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-    server.HandleFunc(w, r, &server)
-}
-
-func (server ServerFields) GetAddr() string {
-    portString := fmt.Sprintf("%d", server.Port)
-    return net.JoinHostPort(server.IP, portString)
-}
-
-func NewServer(ip string, port int) (server *ServerFields) {
-    server = &ServerFields{IP: ip,
-        Port:              port,
-        DefaultParameters: GlobalParameters.DefaultParameters,
-    }
+func (server *ServerFields) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+    server.HandleFunc(w, r, server)
     return
 }

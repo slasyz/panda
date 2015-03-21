@@ -2,13 +2,14 @@ package handle
 
 import (
     "net/http"
+    "time"
 )
 
 type ServerFieldsProxy struct {
     URL               string
     Redirect          bool
     Headers           []string
-    ConnectTimeout    int
+    ConnectTimeout    time.Duration
     ClientMaxBodySize int
 }
 

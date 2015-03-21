@@ -10,10 +10,9 @@ import (
     "os"
     "path/filepath"
     "regexp"
-    "strconv"
 )
 
-func parseConfigFile(file io.Reader, currentFileName string, currentServer *int) (errs []configError) {
+func parseConfigFile(file io.Reader, currentFileName string) (errs []configError) {
     scanner := bufio.NewScanner(file)
     currentLineNumber := 0
 
@@ -28,15 +27,10 @@ func parseConfigFile(file io.Reader, currentFileName string, currentServer *int)
         switch {
         case currentLine == "":
             continue
-        case virtualHostRegexp.MatchString(currentLine):
-            submatches := getRegexpSubmatches(virtualHostRegexp, []string{"ip", "port"}, currentLine)
-            ip := submatches[0]
-            port, _ := strconv.Atoi(submatches[1])
-
-            server := handle.NewServer(ip, port)
-            handle.GlobalParameters.Servers = append(handle.GlobalParameters.Servers, *server)
-            *currentServer++
-            core.Debug("%s:%d: found new virtualhost with IP %s and port %d", currentFileName, currentLineNumber, ip, port)
+        case currentLine == "[VirtualHost]":
+            server := handle.ServerFields{DefaultParameters: handle.GlobalParameters.DefaultParameters}
+            handle.GlobalParameters.Servers = append(handle.GlobalParameters.Servers, server)
+            core.Debug("%s:%d: found new virtualhost", currentFileName, currentLineNumber)
         case fieldRegexp.MatchString(currentLine):
             submatches := getRegexpSubmatches(fieldRegexp, []string{"name", "sign", "value"}, currentLine)
             name := submatches[0]
@@ -46,10 +40,11 @@ func parseConfigFile(file io.Reader, currentFileName string, currentServer *int)
             core.Debug("%s:%d: found field %s with value %s", currentFileName, currentLineNumber, name, value)
 
             var err error
-            if *currentServer == -1 {
+            if len(handle.GlobalParameters.Servers) == 0 {
                 err = parseGlobalParameter(name, sign, value, currentFileName)
             } else {
-                err = parseServerParameter(name, sign, value, &handle.GlobalParameters.Servers[*currentServer], currentFileName)
+                currentServer := len(handle.GlobalParameters.Servers) - 1
+                err = parseServerParameter(name, sign, value, &handle.GlobalParameters.Servers[currentServer], currentFileName)
             }
 
             if err != nil {
@@ -68,7 +63,7 @@ func parseConfigFile(file io.Reader, currentFileName string, currentServer *int)
                 }
 
                 core.Debug("%s:%d: enter the file %s", currentFileName, currentLineNumber, includedFileName)
-                errs = append(errs, parseConfigFile(includedFile, includedFileName, currentServer)...)
+                errs = append(errs, parseConfigFile(includedFile, includedFileName)...)
             } else if command == "include_dir" {
                 // TODO
             }
@@ -90,13 +85,6 @@ func ParseConfig(fileName string) (errs []error) {
     lineContentRegexp = regexp.MustCompile(`^\s*` +
         `(?P<content>(("[^"]*")|([^"]))*?)` +
         `\s*(\/\/.*)?\s*$`)
-    virtualHostRegexp = regexp.MustCompile(`^` +
-        `\[VirtualHost\s*\"` +
-        `(?P<ip>[^"]*)` +
-        `:` +
-        `(?P<port>[^":]+)` +
-        `\"\]` +
-        `$`)
     fieldRegexp = regexp.MustCompile(`^` +
         `(?P<name>[a-zA-Z0-9_]+)` +
         `\s*` +
@@ -112,8 +100,7 @@ func ParseConfig(fileName string) (errs []error) {
     integerRegexp = regexp.MustCompile(`^\d+$`)
     sizeRegexp = regexp.MustCompile(`^(?P<value>\d+)(?P<unit>B|KB|MB|GB)`)
 
-    currentServer := -1
-    configErrors := parseConfigFile(file, fileName, &currentServer)
+    configErrors := parseConfigFile(file, fileName)
     if len(configErrors) != 0 {
         errs = make([]error, len(configErrors), len(configErrors))
 

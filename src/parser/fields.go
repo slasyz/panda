@@ -8,13 +8,13 @@ import (
 func parseDefaultParameter(name, sign, value, currentFileName string, dpField *handle.DefaultParameters) (err error) {
     switch name {
     case "AccessLog":
-        handle.GlobalParameters.AccessLogger, err = assignLoggerValue(name, sign, value, currentFileName)
+        err = assignLoggerValue(name, sign, value, currentFileName, &handle.GlobalParameters.AccessLogger)
     case "ErrorLog":
-        handle.GlobalParameters.ErrorLogger, err = assignLoggerValue(name, sign, value, currentFileName)
+        err = assignLoggerValue(name, sign, value, currentFileName, &handle.GlobalParameters.ErrorLogger)
     case "ReadTimeout":
-        handle.GlobalParameters.ReadTimeout, err = assignDurationValue(name, sign, value)
+        err = assignDurationValue(name, sign, value, &handle.GlobalParameters.ReadTimeout)
     case "WriteTimeout":
-        handle.GlobalParameters.WriteTimeout, err = assignDurationValue(name, sign, value)
+        err = assignDurationValue(name, sign, value, &handle.GlobalParameters.WriteTimeout)
     }
     return
 }
@@ -23,13 +23,13 @@ func parseDefaultParameter(name, sign, value, currentFileName string, dpField *h
 func parseGlobalParameter(name, sign, value, currentFileName string) (err error) {
     switch name {
     case "User":
-        handle.GlobalParameters.User, err = assignStringValue(name, sign, value)
+        err = assignStringValue(name, sign, value, &handle.GlobalParameters.User)
     case "AccessLog", "ErrorLog", "ReadTimeout", "WriteTimeout":
         err = parseDefaultParameter(name, sign, value, currentFileName, &handle.GlobalParameters.DefaultParameters)
     case "PathToTPL":
-        handle.GlobalParameters.PathToTPL, err = assignPathValue(name, sign, value, currentFileName)
+        err = assignPathValue(name, sign, value, currentFileName, &handle.GlobalParameters.PathToTPL)
     case "ImportTPLsIntoMemory":
-        handle.GlobalParameters.ImportTPLsIntoMemory, err = assignBooleanValue(name, sign, value)
+        err = assignBooleanValue(name, sign, value, &handle.GlobalParameters.ImportTPLsIntoMemory)
     default:
         err = errors.New("unknown field " + name)
     }
@@ -40,12 +40,14 @@ func parseGlobalParameter(name, sign, value, currentFileName string) (err error)
 // parseServerParameter sets value of specified server's parameter
 func parseServerParameter(name, sign, value string, server *handle.ServerFields, currentFileName string) (err error) {
     switch name {
-    case "Hostname":
-        server.Hostname, err = assignStringValue(name, sign, value)
+    case "Hostnames":
+        err = appendStringValue(name, sign, value, &server.Hostnames)
+    case "Ports":
+        err = appendIntegerValue(name, sign, value, &server.Ports)
     case "AccessLog", "ErrorLog", "ReadTimeout", "WriteTimeout":
         err = parseDefaultParameter(name, sign, value, currentFileName, &server.DefaultParameters)
     case "Type":
-        server.Type, err = assignStringValue(name, sign, value)
+        err = assignStringValue(name, sign, value, &server.Type)
 
         switch server.Type {
         case "static":

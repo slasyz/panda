@@ -13,7 +13,6 @@ import (
 // Line regexps
 
 var lineContentRegexp *regexp.Regexp
-var virtualHostRegexp *regexp.Regexp
 var fieldRegexp *regexp.Regexp
 var commandRegexp *regexp.Regexp
 
@@ -44,18 +43,18 @@ func checkAppendSign(name, sign string) (err error) {
 
 // Integer fields
 
-func assignIntegerValue(name, sign, value string) (result int, err error) {
+func assignIntegerValue(name, sign, value string, result *int) (err error) {
     err = checkAssignSign(name, sign)
 
-    result, err = parseIntegerValue(name, sign, value)
+    *result, err = parseIntegerValue(name, sign, value)
     return
 }
 
-func appendIntegerValue(name, sign, value string, array []int) (result []int, err error) {
+func appendIntegerValue(name, sign, value string, array *[]int) (err error) {
     err = checkAppendSign(name, sign)
 
     resultValue, err := parseIntegerValue(name, sign, value)
-    result = append(array, resultValue)
+    *array = append(*array, resultValue)
     return
 }
 
@@ -70,10 +69,10 @@ func parseIntegerValue(name, sign, value string) (result int, err error) {
 
 // Size fields
 
-func assignSizeValue(name, sign, value string) (result int, err error) {
+func assignSizeValue(name, sign, value string, result *int) (err error) {
     err = checkAssignSign(name, sign)
 
-    result, err = parseSizeValue(name, sign, value)
+    *result, err = parseSizeValue(name, sign, value)
     return
 }
 
@@ -104,15 +103,10 @@ func parseSizeValue(name, sign, value string) (result int, err error) {
 
 // Size fields
 
-func assignDurationValue(name, sign, value string) (result time.Duration, err error) {
+func assignDurationValue(name, sign, value string, result *time.Duration) (err error) {
     err = checkAssignSign(name, sign)
 
-    result, err = parseDurationValue(name, sign, value)
-    return
-}
-
-func parseDurationValue(name, sign, value string) (result time.Duration, err error) {
-    result, err = time.ParseDuration(value)
+    *result, err = time.ParseDuration(value)
     if err != nil {
         err = mustBe(name, "time duration, such as \"300ms\", \"-1.5h\" or \"2h45m\"")
     }
@@ -121,18 +115,18 @@ func parseDurationValue(name, sign, value string) (result time.Duration, err err
 
 // String fields
 
-func assignStringValue(name, sign, value string) (result string, err error) {
+func assignStringValue(name, sign, value string, result *string) (err error) {
     err = checkAssignSign(name, sign)
 
-    result, err = parseStringValue(name, sign, value)
+    *result, err = parseStringValue(name, sign, value)
     return
 }
 
-func appendStringValue(name, sign, value string, array []string) (result []string, err error) {
+func appendStringValue(name, sign, value string, array *[]string) (err error) {
     err = checkAppendSign(name, sign)
 
     resultValue, err := parseStringValue(name, sign, value)
-    result = append(array, resultValue)
+    *array = append(*array, resultValue)
     return
 }
 
@@ -147,18 +141,18 @@ func parseStringValue(name, sign, value string) (result string, err error) {
 
 // Path fields
 
-func assignPathValue(name, sign, value, currentFile string) (result string, err error) {
+func assignPathValue(name, sign, value, currentFile string, result *string) (err error) {
     err = checkAssignSign(name, sign)
 
-    result, err = parsePathValue(name, sign, value, currentFile)
+    *result, err = parsePathValue(name, sign, value, currentFile)
     return
 }
 
-func appendPathValue(name, sign, value, currentFile string, array []string) (result []string, err error) {
+func appendPathValue(name, sign, value, currentFile string, array *[]string) (err error) {
     err = checkAppendSign(name, sign)
 
     resultValue, err := parsePathValue(name, sign, value, currentFile)
-    result = append(array, resultValue)
+    *array = append(*array, resultValue)
     return
 }
 
@@ -174,27 +168,27 @@ func parsePathValue(name, sign, value, currentFile string) (result string, err e
 
 // Logger fields
 
-func assignLoggerValue(name, sign, value, currentFile string) (result *log.Logger, err error) {
+func assignLoggerValue(name, sign, value, currentFile string, result **log.Logger) (err error) {
     err = checkAssignSign(name, sign)
 
     fileName, err := parsePathValue(name, sign, value, currentFile)
     if err != nil {
         return
     }
-    result, err = core.OpenLogFile(fileName)
+    *result, err = core.OpenLogFile(fileName)
 
     return
 }
 
 // Boolean fields
 
-func assignBooleanValue(name, sign, value string) (result bool, err error) {
+func assignBooleanValue(name, sign, value string, result *bool) (err error) {
     err = checkAssignSign(name, sign)
 
     if value == "true" {
-        result = true
+        *result = true
     } else if value == "false" {
-        result = false
+        *result = false
     } else {
         err = mustBe(name, "true or false")
     }

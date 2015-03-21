@@ -9,9 +9,9 @@ import (
 func parseServerParameterStatic(name, sign, value string, custom *handle.ServerFieldsStatic, currentFileName string) (err error) {
     switch name {
     case "Root":
-        custom.Root, err = assignStringValue(name, sign, value)
+        err = assignStringValue(name, sign, value, &custom.Root)
     case "Indexes":
-        custom.Indexes, err = assignBooleanValue(name, sign, value)
+        err = assignBooleanValue(name, sign, value, &custom.Indexes)
     default:
         err = errors.New("unknown field " + name)
     }

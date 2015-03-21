@@ -37,17 +37,25 @@ func main() {
         return
     }
 
-    // Begin to listen
-    for i, srv := range handle.GlobalParameters.Servers {
-        // create new http.Server
-        s := &http.Server{
-            Addr:         srv.GetAddr(),
-            Handler:      srv,
-            ReadTimeout:  srv.DefaultParameters.ReadTimeout,
-            WriteTimeout: srv.DefaultParameters.WriteTimeout,
+    // Create http.Server instances
+    for _, srv := range handle.GlobalParameters.Servers {
+
+        for _, host := range srv.Hostnames {
+            if host == "*" {
+                host = ""
+            }
+            for _, port := range srv.Ports {
+                addr := fmt.Sprintf("%s:%d", host, port)
+                s := &http.Server{
+                    Addr:         addr,
+                    Handler:      &srv,
+                    ReadTimeout:  srv.DefaultParameters.ReadTimeout,
+                    WriteTimeout: srv.DefaultParameters.WriteTimeout,
+                }
+                core.Log("Starting listening to %s", addr)
+                go s.ListenAndServe()
+            }
         }
-        core.Log("Starting listening to %s (server #%d)", srv.GetAddr(), i+1)
-        go s.ListenAndServe()
     }
 
     var input string

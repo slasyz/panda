@@ -9,15 +9,15 @@ import (
 func parseServerParameterProxy(name, sign, value string, custom *handle.ServerFieldsProxy, currentFileName string) (err error) {
     switch name {
     case "URL":
-        custom.URL, err = assignStringValue(name, sign, value)
+        err = assignStringValue(name, sign, value, &custom.URL)
     case "Redirect":
-        custom.Redirect, err = assignBooleanValue(name, sign, value)
+        err = assignBooleanValue(name, sign, value, &custom.Redirect)
     case "Headers":
-        custom.Headers, err = appendStringValue(name, sign, value, custom.Headers)
+        err = appendStringValue(name, sign, value, &custom.Headers)
     case "ConnectTimeout":
-        custom.ConnectTimeout, err = assignIntegerValue(name, sign, value)
+        err = assignDurationValue(name, sign, value, &custom.ConnectTimeout)
     case "ClientMaxBodySize":
-        custom.ClientMaxBodySize, err = assignSizeValue(name, sign, value)
+        err = assignSizeValue(name, sign, value, &custom.ClientMaxBodySize)
     default:
         err = errors.New("unknown field " + name)
     }
