@@ -45,6 +45,9 @@ func checkAppendSign(name, sign string) (err error) {
 
 func assignIntegerValue(name, sign, value string, result *int) (err error) {
     err = checkAssignSign(name, sign)
+    if err != nil {
+        return err
+    }
 
     *result, err = parseIntegerValue(name, sign, value)
     return
@@ -52,6 +55,9 @@ func assignIntegerValue(name, sign, value string, result *int) (err error) {
 
 func appendIntegerValue(name, sign, value string, array *[]int) (err error) {
     err = checkAppendSign(name, sign)
+    if err != nil {
+        return err
+    }
 
     resultValue, err := parseIntegerValue(name, sign, value)
     *array = append(*array, resultValue)
@@ -71,6 +77,9 @@ func parseIntegerValue(name, sign, value string) (result int, err error) {
 
 func assignSizeValue(name, sign, value string, result *int) (err error) {
     err = checkAssignSign(name, sign)
+    if err != nil {
+        return err
+    }
 
     *result, err = parseSizeValue(name, sign, value)
     return
@@ -105,6 +114,9 @@ func parseSizeValue(name, sign, value string) (result int, err error) {
 
 func assignDurationValue(name, sign, value string, result *time.Duration) (err error) {
     err = checkAssignSign(name, sign)
+    if err != nil {
+        return err
+    }
 
     *result, err = time.ParseDuration(value)
     if err != nil {
@@ -117,6 +129,9 @@ func assignDurationValue(name, sign, value string, result *time.Duration) (err e
 
 func assignStringValue(name, sign, value string, result *string) (err error) {
     err = checkAssignSign(name, sign)
+    if err != nil {
+        return err
+    }
 
     *result, err = parseStringValue(name, sign, value)
     return
@@ -124,6 +139,9 @@ func assignStringValue(name, sign, value string, result *string) (err error) {
 
 func appendStringValue(name, sign, value string, array *[]string) (err error) {
     err = checkAppendSign(name, sign)
+    if err != nil {
+        return err
+    }
 
     resultValue, err := parseStringValue(name, sign, value)
     *array = append(*array, resultValue)
@@ -143,6 +161,9 @@ func parseStringValue(name, sign, value string) (result string, err error) {
 
 func assignPathValue(name, sign, value, currentFile string, result *string) (err error) {
     err = checkAssignSign(name, sign)
+    if err != nil {
+        return err
+    }
 
     *result, err = parsePathValue(name, sign, value, currentFile)
     return
@@ -150,6 +171,9 @@ func assignPathValue(name, sign, value, currentFile string, result *string) (err
 
 func appendPathValue(name, sign, value, currentFile string, array *[]string) (err error) {
     err = checkAppendSign(name, sign)
+    if err != nil {
+        return err
+    }
 
     resultValue, err := parsePathValue(name, sign, value, currentFile)
     *array = append(*array, resultValue)
@@ -170,6 +194,9 @@ func parsePathValue(name, sign, value, currentFile string) (result string, err e
 
 func assignLoggerValue(name, sign, value, currentFile string, result **log.Logger) (err error) {
     err = checkAssignSign(name, sign)
+    if err != nil {
+        return err
+    }
 
     fileName, err := parsePathValue(name, sign, value, currentFile)
     if err != nil {
@@ -184,6 +211,9 @@ func assignLoggerValue(name, sign, value, currentFile string, result **log.Logge
 
 func assignBooleanValue(name, sign, value string, result *bool) (err error) {
     err = checkAssignSign(name, sign)
+    if err != nil {
+        return err
+    }
 
     if value == "true" {
         *result = true
