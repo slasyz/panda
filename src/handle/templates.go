@@ -16,6 +16,26 @@ const (
 
 var templates map[string]*template.Template
 
+func readTemplateFromFile(tplName string) (tpl *template.Template, err error) {
+    tplPath := filepath.Join(GlobalParameters.PathToTPL, tplName)
+    tplFile, err := os.Open(tplPath)
+    defer tplFile.Close()
+
+    if err != nil {
+        return
+    }
+
+    stat, _ := tplFile.Stat()
+    if stat.IsDir() {
+        err = errors.New("file " + tplPath + " should be a template file, not a directory")
+        return
+    }
+
+    templateBytes, err := ioutil.ReadAll(tplFile)
+    tpl, err = template.New(tplName).Parse(string(templateBytes))
+    return
+}
+
 func ImportTemplates() (err error) {
     templateFiles := [...]string{ERROR_TPL, LS_TPL}
     templates = make(map[string]*template.Template)
@@ -28,27 +48,6 @@ func ImportTemplates() (err error) {
         }
     }
 
-    return
-}
-
-func readTemplateFromFile(tplName string) (tpl *template.Template, err error) {
-    tplPath := filepath.Join(GlobalParameters.PathToTPL, tplName)
-    tplFile, err := os.Open(tplPath)
-    defer tplFile.Close()
-
-    if err != nil {
-        return
-    }
-
-    stat, _ := tplFile.Stat()
-
-    if stat.IsDir() {
-        err = errors.New("file " + tplPath + " should be a template file, not a directory")
-        return
-    }
-
-    templateBytes, err := ioutil.ReadAll(tplFile)
-    tpl, err = template.New("name").Parse(string(templateBytes))
     return
 }
 
