@@ -9,7 +9,7 @@ import (
 func parseServerParameterStatic(name, sign, value string, custom *handle.ServerFieldsStatic, currentFileName string) (err error) {
     switch name {
     case "Root":
-        err = assignStringValue(name, sign, value, &custom.Root)
+        err = assignPathValue(name, sign, value, currentFileName, &custom.Root)
     case "Indexes":
         err = assignBooleanValue(name, sign, value, &custom.Indexes)
     default:

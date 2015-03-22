@@ -19,7 +19,7 @@ func main() {
 
     // show version and exit
     if *version {
-        fmt.Println("panda version: 0.0.1")
+        fmt.Println("panda version:", core.VERSION)
         return
     }
 
@@ -37,9 +37,16 @@ func main() {
         return
     }
 
-    // Create http.Server instances
-    for _, srv := range handle.GlobalParameters.Servers {
+    if handle.GlobalParameters.ImportTPLsIntoMemory {
+        err := handle.ImportTemplates()
+        if err != nil {
+            core.Log("import templates error: %s", err)
+            return
+        }
+    }
 
+    // Create http.Server instances
+    for i, srv := range handle.GlobalParameters.Servers {
         for _, host := range srv.Hostnames {
             if host == "*" {
                 host = ""
@@ -48,7 +55,7 @@ func main() {
                 addr := fmt.Sprintf("%s:%d", host, port)
                 s := &http.Server{
                     Addr:         addr,
-                    Handler:      &srv,
+                    Handler:      &handle.GlobalParameters.Servers[i],
                     ReadTimeout:  srv.DefaultParameters.ReadTimeout,
                     WriteTimeout: srv.DefaultParameters.WriteTimeout,
                 }

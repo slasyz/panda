@@ -3,9 +3,9 @@
     <title></title>
 </head>
 <body>
-    <h1>Index of {{ url }}:</h1>
+    <h1>Index of {{ .URL }}:</h1>
     <ul>
-        {{range $index, $element := files}}
+        {{range $index, $element := .FileList}}
             <li><a href="{{$index.url}}">{{$index.filename}}</a></li>
         {{end}}
     </ul>

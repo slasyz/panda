@@ -8,9 +8,13 @@ import (
     "time"
 )
 
-var DebugFlag *bool
-var OpenedLoggers map[string]*log.Logger
-var OpenedFiles []*os.File
+var (
+    DebugFlag     *bool
+    OpenedLoggers map[string]*log.Logger
+    OpenedFiles   []*os.File
+)
+
+const VERSION = "0.0.1"
 
 func Debug(str string, a ...interface{}) {
     if *DebugFlag {
