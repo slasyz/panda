@@ -33,7 +33,7 @@ func OpenLogFile(fileName string) (logger *log.Logger, err error) {
     if ok {
         return
     } else {
-        file, err := os.OpenFile(fileName, os.O_RDWR|os.O_APPEND, os.ModeAppend)
+        file, err := os.OpenFile(fileName, os.O_RDWR|os.O_APPEND|os.O_CREATE, 0660)
         if err != nil {
             err = errors.New("cannot open file " + fileName)
         }
