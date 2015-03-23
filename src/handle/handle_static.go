@@ -3,6 +3,7 @@ package handle
 import (
     "github.com/slasyz/panda/src/core"
     "io"
+    "mime"
     "net/http"
     "os"
     "path/filepath"
@@ -92,6 +93,12 @@ func HandleStatic(w http.ResponseWriter, r *http.Request, server *ServerFields) 
         io.Copy(w, indexFile)
         code = http.StatusOK
     case mode.IsRegular():
+        mimetype := mime.TypeByExtension(filepath.Ext(pathToServe))
+        if mimetype == "" {
+            mimetype = "application/octet-stream"
+        }
+        w.Header().Set("Content-Type", mimetype)
+
         io.Copy(w, file)
         code = http.StatusOK
     }
