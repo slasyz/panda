@@ -19,9 +19,9 @@ func NewError(code int, message string) HTTPErrorPipeline {
     }
 }
 
-func ReturnError(w http.ResponseWriter, code int) {
+func ReturnError(w http.ResponseWriter, code int) int {
     w.WriteHeader(code)
     tpl, _ := OpenTemplate(ERROR_TPL)
     tpl.Execute(w, NewError(code, http.StatusText(code)))
-    return
+    return code
 }

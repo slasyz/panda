@@ -47,7 +47,7 @@ func NewLSPipeline(dir *os.File, r *http.Request) (result LSPipeline) {
 
 const INDEX_FILE = "index.html"
 
-func HandleStatic(w http.ResponseWriter, r *http.Request, server *ServerFields) {
+func HandleStatic(w http.ResponseWriter, r *http.Request, server *ServerFields) (code int) {
     custom := server.Custom.(ServerFieldsStatic)
     pathToServe := filepath.Join(custom.Root, r.URL.String())
 
@@ -58,18 +58,18 @@ func HandleStatic(w http.ResponseWriter, r *http.Request, server *ServerFields) 
     if err != nil {
         switch {
         case os.IsNotExist(err):
-            ReturnError(w, http.StatusNotFound)
+            code = ReturnError(w, http.StatusNotFound)
         case os.IsPermission(err):
-            ReturnError(w, http.StatusForbidden)
+            code = ReturnError(w, http.StatusForbidden)
         default:
-            ReturnError(w, http.StatusInternalServerError)
+            code = ReturnError(w, http.StatusInternalServerError)
         }
         return
     }
 
     stat, err := file.Stat()
     if err != nil {
-        ReturnError(w, http.StatusInternalServerError)
+        code = ReturnError(w, http.StatusInternalServerError)
         return
     }
 
@@ -81,16 +81,19 @@ func HandleStatic(w http.ResponseWriter, r *http.Request, server *ServerFields) 
                 if custom.Indexes {
                     tpl, _ := OpenTemplate(LS_TPL)
                     tpl.Execute(w, NewLSPipeline(file, r))
+                    code = http.StatusOK
                 } else {
-                    ReturnError(w, http.StatusForbidden)
+                    code = ReturnError(w, http.StatusForbidden)
                 }
             } else {
-                ReturnError(w, http.StatusInternalServerError)
+                code = ReturnError(w, http.StatusInternalServerError)
             }
         }
         io.Copy(w, indexFile)
+        code = http.StatusOK
     case mode.IsRegular():
         io.Copy(w, file)
+        code = http.StatusOK
     }
     return
 }

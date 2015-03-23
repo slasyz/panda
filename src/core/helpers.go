@@ -28,6 +28,7 @@ func Log(str string, a ...interface{}) {
 }
 
 func OpenLogFile(fileName string) (logger *log.Logger, err error) {
+    Debug("opening log file %s", fileName)
     logger, ok := OpenedLoggers[fileName]
     if ok {
         return

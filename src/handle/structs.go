@@ -1,7 +1,8 @@
 package handle
 
 import (
-    //"github.com/slasyz/panda/core"
+    "fmt"
+    "github.com/slasyz/panda/src/core"
     "log"
     "net/http"
     "time"
@@ -30,10 +31,16 @@ type ServerFields struct {
     Ports      []int
     Type       string
     Custom     interface{}
-    HandleFunc func(http.ResponseWriter, *http.Request, *ServerFields)
+    HandleFunc func(http.ResponseWriter, *http.Request, *ServerFields) int
 }
 
 func (server *ServerFields) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-    server.HandleFunc(w, r, server)
+    code := server.HandleFunc(w, r, server)
+
+    timeStr := time.Now().Format("02/Jan/2006 15:04:05 -0700")
+    logStr := fmt.Sprintf("%s \"%s %s\" %d \"%s\"", r.RemoteAddr, r.Method, r.RequestURI, code, r.UserAgent())
+
+    core.Log(logStr)
+    server.AccessLogger.Printf("[%s] %s\n", timeStr, logStr)
     return
 }
