@@ -7,7 +7,14 @@ import (
     "io/ioutil"
     "os"
     "path/filepath"
+    "runtime"
 )
+
+type GlobalPipeline struct {
+    OS      string
+    Arch    string
+    Version string
+}
 
 const (
     ERROR_TPL = "error.html"
@@ -15,6 +22,7 @@ const (
 )
 
 var templates map[string]*template.Template
+var DefaultGlobalPipeline GlobalPipeline
 
 func readTemplateFromFile(tplName string) (tpl *template.Template, err error) {
     tplPath := filepath.Join(GlobalParameters.PathToTPL, tplName)
@@ -56,6 +64,15 @@ func OpenTemplate(tplName string) (tpl *template.Template, err error) {
         tpl = templates[tplName]
     } else {
         tpl, err = readTemplateFromFile(tplName)
+    }
+    return
+}
+
+func SetDefaultGlobalPipeline() {
+    DefaultGlobalPipeline = GlobalPipeline{
+        OS:      runtime.GOOS,
+        Arch:    runtime.GOARCH,
+        Version: core.VERSION,
     }
     return
 }

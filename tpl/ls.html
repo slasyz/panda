@@ -1,13 +1,17 @@
 <html>
 <head>
-    <title></title>
+    <title>Index of {{ .RequestedURL }}</title>
 </head>
 <body>
-    <h1>Index of {{ .URL }}:</h1>
+    <h1>Index of {{ .RequestedURL }}:</h1>
     <ul>
-        {{range $index, $element := .FileList}}
-            <li><a href="{{$index.url}}">{{$index.filename}}</a></li>
+        {{range .FileList}}
+            <li><a href="{{.URL}}">{{.FileName}}</a></li>
         {{end}}
     </ul>
+    <hr/>
+    <div id="footer">
+        <i>panda/{{.Global.Version}}, {{.Global.OS}}, {{.Global.Arch}}</i>
+    </div>
 </body>
 </html>

@@ -44,6 +44,7 @@ func main() {
             return
         }
     }
+    handle.SetDefaultGlobalPipeline()
 
     // Create http.Server instances
     for i, srv := range handle.GlobalParameters.Servers {
