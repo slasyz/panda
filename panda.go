@@ -31,6 +31,7 @@ func main() {
         for _, err := range errs {
             core.Log("%s", err)
         }
+        return
     }
 
     // Test config and exit.

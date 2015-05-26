@@ -63,10 +63,69 @@ func parseConfigFile(file io.Reader, currentFileName string) (errs []configError
                     errs = append(errs, configError{currentFileName, currentLineNumber, "file " + includedFileName + " can not be open"})
                 }
 
-                core.Debug("%s:%d: enter the file %s", currentFileName, currentLineNumber, includedFileName)
-                errs = append(errs, parseConfigFile(includedFile, includedFileName)...)
+                // Getting file/directory info.
+                stat, err := includedFile.Stat()
+                if err != nil {
+                    errs = append(errs, configError{currentFileName, currentLineNumber, "file " + includedFileName + " can not be open"})
+                }
+
+                switch mode := stat.Mode(); {
+                case mode.IsRegular():
+                    core.Debug("%s:%d: enter the file %s", currentFileName, currentLineNumber, includedFileName)
+                    errs = append(errs, parseConfigFile(includedFile, includedFileName)...)
+                case mode.IsDir():
+                    errs = append(errs, configError{currentFileName, currentLineNumber, includedFileName + " is not a file"})
+                }
             } else if command == "include_dir" {
-                // TODO
+                includedDirectoryName := filepath.Join(filepath.Dir(currentFileName), argument)
+                includedDirectory, err := os.Open(includedDirectoryName)
+
+                // Error while opening file/directory.
+                if err != nil {
+                    switch {
+                    case os.IsNotExist(err):
+                        errs = append(errs, configError{currentFileName, currentLineNumber, "directory " + includedDirectoryName + " is not exists"})
+                    case os.IsPermission(err):
+                        errs = append(errs, configError{currentFileName, currentLineNumber, "directory " + includedDirectoryName + " can not be open (permission error)"})
+                    default:
+                        errs = append(errs, configError{currentFileName, currentLineNumber, "directory " + includedDirectoryName + " can not be open"})
+                    }
+                }
+
+                // Getting file/directory info.
+                stat, err := includedDirectory.Stat()
+                if err != nil {
+                    errs = append(errs, configError{currentFileName, currentLineNumber, "directory " + includedDirectoryName + " can not be open"})
+                }
+
+                switch mode := stat.Mode(); {
+                case mode.IsDir():
+                    // Getting directory content.
+                    fileNamesList, err := includedDirectory.Readdirnames(-1)
+                    if err != nil {
+                        errs = append(errs, configError{currentFileName, currentLineNumber, "error getting directory " + includedDirectoryName + " content"})
+                    }
+
+                    for i, includedFileName := range fileNamesList {
+                        fileNamesList[i] = filepath.Join(includedDirectoryName, includedFileName)
+                    }
+
+                    // Include all files from the directory.
+                    core.Debug("%s:%d: including all files from directory %s", currentFileName, currentLineNumber, includedDirectoryName)
+                    for _, includedFileName := range fileNamesList {
+
+                        includedFile, err := os.Open(includedFileName)
+                        if err != nil {
+                            errs = append(errs, configError{currentFileName, currentLineNumber, "file " + includedFileName + " can not be open"})
+                        }
+
+                        core.Debug("%s:%d: enter the file %s", currentFileName, currentLineNumber, includedFileName)
+                        errs = append(errs, parseConfigFile(includedFile, includedFileName)...)
+                    }
+
+                case mode.IsRegular():
+                    errs = append(errs, configError{currentFileName, currentLineNumber, includedDirectoryName + " is not a directory"})
+                }
             }
         default:
             errs = append(errs, configError{currentFileName, currentLineNumber, "wrong line format"})
