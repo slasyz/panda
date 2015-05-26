@@ -5,6 +5,7 @@ import (
     "github.com/slasyz/panda/src/handle"
 )
 
+// parseDefaultParameter check general parameters for any server type.
 func parseDefaultParameter(name, sign, value, currentFileName string, dpField *handle.DefaultParameters) (err error) {
     switch name {
     case "AccessLog":
@@ -19,7 +20,7 @@ func parseDefaultParameter(name, sign, value, currentFileName string, dpField *h
     return
 }
 
-// parseGlobalParameter sets value of a global parameter
+// parseGlobalParameter sets value of a global parameter.
 func parseGlobalParameter(name, sign, value, currentFileName string) (err error) {
     switch name {
     case "User":
@@ -37,7 +38,7 @@ func parseGlobalParameter(name, sign, value, currentFileName string) (err error)
     return
 }
 
-// parseServerParameter sets value of specified server's parameter
+// parseServerParameter sets value of specified server type parameter.
 func parseServerParameter(name, sign, value string, server *handle.ServerFields, currentFileName string) (err error) {
     switch name {
     case "Hostnames":

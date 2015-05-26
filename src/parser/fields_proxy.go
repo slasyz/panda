@@ -5,7 +5,7 @@ import (
     "github.com/slasyz/panda/src/handle"
 )
 
-// parseServerParameterProxy sets value of "proxy" server
+// parseServerParameterProxy sets value of "proxy" server instance.
 func parseServerParameterProxy(name, sign, value string, custom *handle.ServerFieldsProxy, currentFileName string) (err error) {
     switch name {
     case "URL":

@@ -21,9 +21,11 @@ const (
     LS_TPL    = "ls.html"
 )
 
+// templates variable contains templates imported to memory.
 var templates map[string]*template.Template
 var DefaultGlobalPipeline GlobalPipeline
 
+// readTemplateFromFile returns new template.Template instance (from file).
 func readTemplateFromFile(tplName string) (tpl *template.Template, err error) {
     tplPath := filepath.Join(GlobalParameters.PathToTPL, tplName)
     tplFile, err := os.Open(tplPath)
@@ -44,6 +46,7 @@ func readTemplateFromFile(tplName string) (tpl *template.Template, err error) {
     return
 }
 
+// Import templates to memory.
 func ImportTemplates() (err error) {
     templateFiles := [...]string{ERROR_TPL, LS_TPL}
     templates = make(map[string]*template.Template)
@@ -59,6 +62,7 @@ func ImportTemplates() (err error) {
     return
 }
 
+// OpenTemplate returns new template.Template instance (from memory or file).
 func OpenTemplate(tplName string) (tpl *template.Template, err error) {
     if GlobalParameters.ImportTPLsIntoMemory {
         tpl = templates[tplName]
@@ -68,6 +72,7 @@ func OpenTemplate(tplName string) (tpl *template.Template, err error) {
     return
 }
 
+// SetDefaultGlobalPipeline creates GlobalPipeline instance.
 func SetDefaultGlobalPipeline() {
     DefaultGlobalPipeline = GlobalPipeline{
         OS:      runtime.GOOS,

@@ -11,13 +11,11 @@ import (
 )
 
 // Line regexps
-
 var lineContentRegexp *regexp.Regexp
 var fieldRegexp *regexp.Regexp
 var commandRegexp *regexp.Regexp
 
 // Value types regexps
-
 var integerRegexp *regexp.Regexp
 var sizeRegexp *regexp.Regexp
 

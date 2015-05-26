@@ -5,6 +5,7 @@ import (
     "time"
 )
 
+// ServerFieldsProxy instances store virtualhost config.
 type ServerFieldsProxy struct {
     URL               string
     Redirect          bool
@@ -13,8 +14,10 @@ type ServerFieldsProxy struct {
     ClientMaxBodySize int
 }
 
+// Proxy virtualhost handler.
 func HandleProxy(w http.ResponseWriter, r *http.Request, server *ServerFields) (code int) {
     custom := server.Custom.(ServerFieldsProxy)
     _ = custom
+
     return
 }

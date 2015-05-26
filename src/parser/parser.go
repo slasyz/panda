@@ -12,6 +12,7 @@ import (
     "regexp"
 )
 
+// Starting to parse config file.
 func parseConfigFile(file io.Reader, currentFileName string) (errs []configError) {
     scanner := bufio.NewScanner(file)
     currentLineNumber := 0

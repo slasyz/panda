@@ -5,7 +5,7 @@ import (
     "github.com/slasyz/panda/src/handle"
 )
 
-// parseServerParameterProxy sets value of "static" server
+// parseServerParameterProxy sets value of "static" server instance.
 func parseServerParameterStatic(name, sign, value string, custom *handle.ServerFieldsStatic, currentFileName string) (err error) {
     switch name {
     case "Root":

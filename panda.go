@@ -17,13 +17,13 @@ func main() {
     version := flag.Bool("v", false, "show version and exit")
     flag.Parse()
 
-    // show version and exit
+    // Show version and exit.
     if *version {
         fmt.Println("panda version:", core.VERSION)
         return
     }
 
-    // config parsing
+    // Config parsing.
     core.OpenedLoggers = make(map[string]*log.Logger)
     defer core.CloseLogFiles()
     errs := parser.ParseConfig(*configFile)
@@ -32,11 +32,14 @@ func main() {
             core.Log("%s", err)
         }
     }
+
+    // Test config and exit.
     if *testConfig {
         core.Log("Config test successful!")
         return
     }
 
+    // Import templates into memory if necessary.
     if handle.GlobalParameters.ImportTPLsIntoMemory {
         err := handle.ImportTemplates()
         if err != nil {
@@ -46,12 +49,14 @@ func main() {
     }
     handle.SetDefaultGlobalPipeline()
 
-    // Create http.Server instances
+    // Create http.Server instances.
     for i, srv := range handle.GlobalParameters.Servers {
         for _, host := range srv.Hostnames {
             if host == "*" {
                 host = ""
             }
+
+            // Create new instance for each port.
             for _, port := range srv.Ports {
                 addr := fmt.Sprintf("%s:%d", host, port)
                 s := &http.Server{
@@ -67,8 +72,8 @@ func main() {
     }
 
     var input string
-    fmt.Scanln(&input)
+    for {
+        fmt.Scanln(&input)
+    }
     fmt.Println("done")
-
-    // TODO
 }

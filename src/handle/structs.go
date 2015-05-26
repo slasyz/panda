@@ -24,7 +24,7 @@ var GlobalParameters struct {
     Servers              []ServerFields
 }
 
-// Server is type containing each server parameters
+// Server is type containing each server type parameters.
 type ServerFields struct {
     DefaultParameters
     Hostnames  []string
