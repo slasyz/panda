@@ -10,6 +10,7 @@ import (
     "os"
     "path/filepath"
     "regexp"
+    "sort"
 )
 
 // Starting to parse config file.
@@ -105,6 +106,7 @@ func parseConfigFile(file io.Reader, currentFileName string) (errs []configError
                     if err != nil {
                         errs = append(errs, configError{currentFileName, currentLineNumber, "error getting directory " + includedDirectoryName + " content"})
                     }
+                    sort.Strings(fileNamesList)
 
                     for i, includedFileName := range fileNamesList {
                         fileNamesList[i] = filepath.Join(includedDirectoryName, includedFileName)

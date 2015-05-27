@@ -3,13 +3,27 @@ package parser
 import (
     "errors"
     "github.com/slasyz/panda/src/handle"
+    "net/url"
 )
 
 // parseServerParameterProxy sets value of "proxy" server instance.
 func parseServerParameterProxy(name, sign, value string, custom *handle.ServerFieldsProxy, currentFileName string) (err error) {
     switch name {
     case "URL":
-        err = assignStringValue(name, sign, value, &custom.URL)
+        var rawurl string
+        err = assignStringValue(name, sign, value, &rawurl)
+        if err != nil {
+            return
+        }
+
+        url, err := url.Parse(rawurl)
+        if err != nil {
+            return err
+        }
+
+        custom.Scheme = url.Scheme
+        custom.Host = url.Host
+
     case "Redirect":
         err = assignBooleanValue(name, sign, value, &custom.Redirect)
     case "Headers":
